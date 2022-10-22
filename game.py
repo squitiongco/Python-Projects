@@ -22,15 +22,36 @@ class Game:
     
     # Move left.
     def move_left(self):
-        pass 
-    
+        can_move_left = True
+        
+        for row, col in self.current_piece.global_coords:
+            if col <= 0 or self.grid[row][col-1] > 0.0:
+                can_move_left = False
+        
+        if can_move_left:
+            self.current_piece.center_col -= 1
+        
     # Move right. 
     def move_right(self):
-        pass 
+        can_move_right = True
+        
+        for row, col in self.current_piece.global_coords:
+            if col >= 9 or self.grid[row][col+1] > 0.0:
+                can_move_right = False
+        
+        if can_move_right:
+            self.current_piece.center_col += 1 
     
     # Move down.
     def move_down(self): 
-        pass
+        can_move_down = True
+        
+        for row, col in self.current_piece.global_coords:
+            if row >= 19 or self.grid[row+1][col] > 0.0:
+                can_move_down = False
+        
+        if can_move_down:
+            self.current_piece.center_row += 1 
         
     # Rotate.
     def rotate(self):
@@ -38,10 +59,55 @@ class Game:
         
     # Update. 
     def update(self):
-        pass
+        self.move_down()
+        self._try_land_piece()
+        self._clear_rows()
+        
+        if sum(self.grid[0]) > 0.0:
+            self.is_over = True 
     
     # Render. 
     def render(self):
-        pass
+        margin = 2
+        width = self.screen.get_width() // 10
+        height = self.screen.get_height() // 20
+        
+        for pr, pc in self.current_piece.global_coords:
+            rect = [pc * width  + margin, pr * height + margin, width - margin, height - margin]
+            pygame.draw.rect(self.screen, self.current_piece.color, rect, border_radius=2)
+            
+        for row in range(20):
+            for col in range(10):
+                if self.grid[row][col]:
+                    rect = [col * width + margin, row * height + margin, width - margin, height - margin]
+                    pygame.draw.rect(self.screen, self.grid_colors[row][col], rect, border_radius=2)
+
+    def _try_land_piece(self):
+        try:
+            # Land the piece
+            landed = False 
+            
+            for row, col in self.current_piece.global_coords:
+                if row >= 19 or self.grid[row+1][col] > 0.0:
+                    landed = True
+                    break
+                
+            if landed: 
+                for row, col in self.current_piece.global_coords:
+                    self.grid[row][col] = 1.0
+                    self.grid_colors[row][col] = self.current_piece.color
+                self.current_piece = Piece()
+        
+        except IndexError:
+            return    
     
-    
+    def _clear_rows(self):
+        rows_to_delete = [i for i in range(20) if sum(self.grid[i]) == 10.0]
+        self.grid = [self.grid[i] for i in range(20) if i not in rows_to_delete]
+        self.grid_colors = [self.grid_colors[i] for i in range(20) if i not in rows_to_delete]
+        
+        for i in range(len(rows_to_delete)):
+            self.grid_insert(0, [0.0] * 10)
+            self.grid_colors.insert(0, [None] *10)
+            
+        self.score += 10 * len(rows_to_delete)    

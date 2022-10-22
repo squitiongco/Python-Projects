@@ -2,7 +2,7 @@ import pygame
 
 from game import Game 
 
-screen_size = width, height = 400, 800
+screen_size = width, height = 400, 650
 
 if __name__ == '__main__':
 

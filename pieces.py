@@ -11,18 +11,18 @@ GEOMETRY = [
 ]
 
 COLOR = [
-    (0, 238, 238)   # Clear Blue
-    (23, 1 232)     # Dark Blue
-    (0, 238, 33)    # Green
-    (153, 0, 239)   # Purple
-    (238, 0, 20)    # Red
-    (237, 238, 42)  # Yellow
-    (255, 215, 0)   # Orange
+    (0, 238, 238),   # Clear Blue
+    (23, 1, 232),    # Dark Blue
+    (0, 238, 33),    # Green
+    (153, 0, 239),   # Purple
+    (238, 0, 20),    # Red
+    (237, 238, 42),  # Yellow
+    (255, 215, 0)    # Orange
 ]
 
 class Piece:
     
-    def__init__(self) -> None:
+    def __init__(self) -> None:
         self.center_row = 0
         self.center_col = 4
         self.relative_coords = choice(GEOMETRY)
